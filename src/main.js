@@ -11,7 +11,8 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
 import { faStamp } from '@fortawesome/free-solid-svg-icons'
 import { faCircleInfo } from '@fortawesome/free-solid-svg-icons'
-library.add(faStamp, faCircleInfo)
+import { faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons'
+library.add(faStamp, faCircleInfo, faChevronLeft, faChevronRight)
 
 const app = createApp(App)
 

@@ -5,12 +5,14 @@
 
   const props = defineProps(['digest'])
   const web3 = ref(new Web3(window.ethereum))
-  const contractAddress = ref('0x3F4eb5113A400B2C7525F900655603709990dFEd')
+  const contractAddress = ref('0x587fC481145182Bd1EDDa5DfAcAb7E28BaD333aA')
   const walletConnected = ref(false)
 
   const timestamp = ref(null)
   const claimed = ref(false)
   const transferred = ref(false)
+
+  const latestEvent = ref(null)
 
   const errorDigestNotInAccount = ref(false)
 
@@ -79,6 +81,32 @@
 
   }
 
+
+  function searchDigestEvents() {
+    if (!walletConnected.value) {
+      return
+    }
+    let contract = new web3.value.eth.Contract(abi, contractAddress.value)
+    let sha256_checksum_bytes = web3.value.utils.hexToBytes(props.digest.string)
+    contract.getPastEvents('Claim', {
+      filter: {sha256_checksum: web3.value.utils.bytesToHex(sha256_checksum_bytes)},
+      fromBlock: 0,
+      toBlock: 'latest'
+    }).then(events => {
+      let eventsLength = events.length;
+      let blockNumber = 0;
+      let latestIndex = 0;
+      for (let i = 0; i < eventsLength; i++) {
+        if (events[i].blockNumber > blockNumber) {
+          // TODO: This is a rough estimate. Also check the transaction index!
+          blockNumber = events[i].blockNumber
+          latestIndex = i;
+        }
+      }
+      latestEvent.value = events[latestIndex]
+    });
+  }
+
   onMounted(() => {
     checkWalletConnection()
   })
@@ -87,6 +115,8 @@
     if (digest.string) {
       errorDigestNotInAccount.value = false
       checkDigest()
+      searchDigestEvents()
+      console.log(latestEvent.value)
     }
   })
 </script>
@@ -98,6 +128,7 @@
     <button v-if="walletConnected && digest.string" @click="checkDigest">Send transaction</button><br>
     <button v-if="walletConnected && digest.string" @click="storeDigest">Store digest</button><br>
     <span v-if="timestamp">Timestamp of file: {{ timestamp.toDateString() }}</span><br>
+    <span v-if="latestEvent">Claimed by: {{ latestEvent.returnValues.claimant }}</span><br>
     <span v-if="errorDigestNotInAccount">Digest not found in Ethereum account!</span>
   </div>
 </template>
