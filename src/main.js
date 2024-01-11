@@ -12,7 +12,21 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { faStamp } from '@fortawesome/free-solid-svg-icons'
 import { faCircleInfo } from '@fortawesome/free-solid-svg-icons'
 import { faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons'
-library.add(faStamp, faCircleInfo, faChevronLeft, faChevronRight)
+import { faCircleCheck, faCircleXmark } from '@fortawesome/free-solid-svg-icons'
+import { faUser } from '@fortawesome/free-solid-svg-icons'
+import { faClock } from '@fortawesome/free-solid-svg-icons'
+import { faEthereum } from '@fortawesome/free-brands-svg-icons'
+import { faSpinner } from '@fortawesome/free-solid-svg-icons'
+library.add(
+  faStamp,
+  faCircleInfo,
+  faChevronLeft, faChevronRight,
+  faCircleCheck, faCircleXmark,
+  faUser,
+  faClock,
+  faEthereum,
+  faSpinner
+)
 
 const app = createApp(App)
 

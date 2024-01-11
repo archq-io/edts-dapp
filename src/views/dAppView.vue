@@ -11,6 +11,7 @@ const route = useRoute();
 const embedBadge = ref(false)
 let state = reactive({
   file: null,
+  urlPresent: false,
   digest: {},
 });
 
@@ -29,6 +30,7 @@ watch(() => route.params.digest, digest => {
 
 watch(() => route.query.url, url => {
   if (url) {
+    state.urlPresent = true
     fetch(url).then(response => {
       response.arrayBuffer().then(value => {
         let contentType = response.headers.get('Content-Type')
@@ -37,6 +39,8 @@ watch(() => route.query.url, url => {
         state.file = file
       })
     })
+  } else {
+    state.urlPresent = false
   }
 }, { immediate: true })
 </script>
@@ -45,12 +49,12 @@ watch(() => route.query.url, url => {
   <main>
     <div class="flex flex-col justify-center items-center mt-10">
       <DragAndDrop v-if="!state.file" @file-upload="processFileUpload" class="m-2" />
-      <button class="inline-flex items-center ml-1 border rounded-md py-1 px-2 hover:bg-gray-200" v-else @click="state.file = null">
+      <button class="inline-flex items-center ml-1 border rounded-md py-1 px-2 hover:bg-gray-200 text-lg" v-else @click="state.file = null">
         <font-awesome-icon class="mr-1" icon="fa-solid fa-chevron-left" />
         Use another file
       </button>
       <EthereumPublishDigest :digest="state.digest" class="m-2" />
-      <button class="inline-flex items-center ml-1 border rounded-md py-1 px-2 hover:bg-gray-200" @click="embedBadge = !embedBadge">
+      <button v-if="state.urlPresent" class="inline-flex items-center ml-1 border rounded-md py-1 px-2 hover:bg-gray-200 text-lg" @click="embedBadge = !embedBadge">
         <span v-if="!embedBadge">Embed a badge</span>
         <span v-else>Hide</span>
       </button>
