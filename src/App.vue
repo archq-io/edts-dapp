@@ -7,7 +7,7 @@ import Footer from './components/Footer.vue'
 <template>
   <Navbar logo-src="@/assets/logo.png" />
   <RouterView class="flex-auto shrink-0" />
-  <Footer class="shrink-0" copyright-year="2024" />
+  <Footer class="shrink-0"/>
 </template>
 
 <style>
@@ -20,7 +20,7 @@ body,
 #app {
   display: flex;
   flex-direction: column;
-  background-color: rgb(250 250 250);
+  background-color: rgb(255 255 255); /* Can be rgb(250 250 250) */
 }
 
 @font-face {

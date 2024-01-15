@@ -12,7 +12,7 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { faStamp } from '@fortawesome/free-solid-svg-icons'
 import { faCircleInfo } from '@fortawesome/free-solid-svg-icons'
 import { faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons'
-import { faCircleCheck, faCircleXmark } from '@fortawesome/free-solid-svg-icons'
+import { faCircleCheck, faCircleXmark, faCircleQuestion } from '@fortawesome/free-solid-svg-icons'
 import { faUser } from '@fortawesome/free-solid-svg-icons'
 import { faClock } from '@fortawesome/free-solid-svg-icons'
 import { faEthereum } from '@fortawesome/free-brands-svg-icons'
@@ -21,7 +21,7 @@ library.add(
   faStamp,
   faCircleInfo,
   faChevronLeft, faChevronRight,
-  faCircleCheck, faCircleXmark,
+  faCircleCheck, faCircleXmark, faCircleQuestion,
   faUser,
   faClock,
   faEthereum,

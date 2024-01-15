@@ -16,9 +16,13 @@
   const latestEvent = ref(null)
 
   const digestClaimedByAccount = ref(false)
+  const digestClaimChecked = ref(false)
+
+  const operationInProgress = ref(false)
 
   const revealDigest = ref(false)
   const digestOnBlockchain = ref(false)
+  const searchForDigestCompleted = ref(false)
 
   function checkWalletConnection() {
     return new Promise((resolve, reject) => {
@@ -70,6 +74,7 @@
     }).then(receipt => {
       if (ethereumAccount) {
         digestClaimedByAccount.value = true
+        digestClaimChecked.value = true
       }
 
       timestamp.value = new Date(Number(receipt.timestamp)*1000)
@@ -80,6 +85,7 @@
         if (e.name == 'ResponseError') {
           if (ethereumAccount) {
             digestClaimedByAccount.value = false
+            digestClaimChecked.value = true
           }
           console.log("Could not retrieve response! Perhaps you don't have a claim on this checksum?")
         }
@@ -132,11 +138,17 @@
       if (eventsLength != 0) {
         latestEvent.value = events[latestIndex]
         digestOnBlockchain.value = true
+        searchForDigestCompleted.value = true
 
         // Get more detailed information about this event
         console.log(latestEvent.value.returnValues)
         checkDigest(latestEvent.value.returnValues.claimant)
+      } else {
+        digestOnBlockchain.value = true
+        searchForDigestCompleted.value = true
       }
+    }).catch(e => {
+      searchForDigestCompleted.value = false;
     });
   }
 
@@ -147,7 +159,9 @@
   watch(() => props.digest, (digest) => {
     if (digest.string) {
       digestOnBlockchain.value = false
+      searchForDigestCompleted.value = false
       digestClaimedByAccount.value = false
+      digestClaimChecked.value = false
       revealDigest.value = false
 
       checkWalletConnection().then(s => {
@@ -158,27 +172,38 @@
 </script>
 
 <template>
-  <div class="flex flex-col items-center justify-center">
-    <div v-if="!walletConnected && !providerConnected" class="flex justify-center items-center">
+  <div class="flex flex-col items-center justify-center w-full">
+    <div v-if="digest.string && !walletConnected && !providerConnected" class="flex justify-center items-center">
       <font-awesome-icon class="animate-spin" size="xl" icon="fa-solid fa-spinner" />
     </div>
-    <div v-else class="flex flex-col justify-center items-center">
-      <div v-if="digest.string" @click="revealDigest = !revealDigest" :class="{ 'bg-green-400 hover:bg-green-500': digestOnBlockchain, 'bg-red-400 hover:bg-red-500': !digestOnBlockchain }" class="flex justify-center items-center rounded-md cursor-pointer py-1 px-2 my-1 text-lg">
-        <font-awesome-icon v-if="digestOnBlockchain" class="mr-1" icon="fa-solid fa-circle-check" />
-        <font-awesome-icon v-else class="mr-1" icon="fa-solid fa-circle-xmark" />
-        <span v-if="!revealDigest && digestOnBlockchain">Digest claimed (click to reveal)</span>
-        <span v-if="!revealDigest && !digestOnBlockchain">Digest not found (click to reveal)</span>
-        <span v-if="revealDigest">{{ digest.string }}</span>
+    <div v-else class="flex flex-col justify-center items-center w-full">
+      <div v-if="digestOnBlockchain && searchForDigestCompleted" class="flex flex-row justify-center items-center w-full h-32 bg-gradient-to-r from-green-300 via-green-500 to-green-300 my-4">
+        <font-awesome-icon class="text-white" icon="fa-solid fa-circle-check" size="6x" />
       </div>
+      <div v-if="!digestOnBlockchain && searchForDigestCompleted" class="flex flex-row justify-center items-center w-full h-32 bg-gradient-to-r from-red-300 via-red-500 to-red-300 my-4">
+        <font-awesome-icon class="text-white" icon="fa-solid fa-circle-xmark" size="6x" />
+      </div>
+      <div v-if="!searchForDigestCompleted" class="flex flex-row justify-center items-center w-full h-32 bg-gradient-to-r from-slate-300 via-slate-500 to-slate-300 my-4">
+        <font-awesome-icon class="text-white" icon="fa-solid fa-circle-xmark" size="6x" />
+      </div>
+      <div class="flex flex-col lg:flex-row justify-center items-center">
+        <div v-if="digest.string" @click="revealDigest = !revealDigest" :class="{ 'bg-green-400 hover:bg-green-500': digestOnBlockchain && searchForDigestCompleted, 'bg-red-400 hover:bg-red-500': !digestOnBlockchain && searchForDigestCompleted, 'bg-slate-300 hover:bg-slate-400': !searchForDigestCompleted }" class="flex justify-center items-center rounded-md cursor-pointer py-1 px-2 my-1 mr-1 text-lg">
+          <font-awesome-icon v-if="digestOnBlockchain" class="mr-1" icon="fa-solid fa-circle-check" />
+          <font-awesome-icon v-else class="mr-1" icon="fa-solid fa-circle-xmark" />
+          <span v-if="!revealDigest && digestOnBlockchain">Digest claimed (click to reveal)</span>
+          <span v-if="!revealDigest && !digestOnBlockchain">Digest not found (click to reveal)</span>
+          <span v-if="revealDigest" class="overflow-x-auto max-w-48 md:max-w-fit">{{ digest.string }}</span>
+        </div>
 
-      <div v-if="timestamp" class="flex justify-center items-center rounded-md py-1 px-2 my-1 bg-gray-300 text-lg">
-        <font-awesome-icon class="mr-1" icon="fa-solid fa-clock" />
-        <span>{{ timestamp.toDateString() }}</span>
+        <div v-if="timestamp" class="flex justify-center items-center rounded-md py-1 px-2 my-1 ml-1 bg-gray-300 text-lg">
+          <font-awesome-icon class="mr-1" icon="fa-solid fa-clock" />
+          <span>{{ timestamp.toLocaleString() }}</span>
+        </div>
       </div>
 
       <div v-if="latestEvent" :class="{ 'bg-green-400': digestClaimedByAccount, 'bg-gray-300': !digestClaimedByAccount }" class="flex justify-center items-center rounded-md py-1 px-2 my-1 text-lg">
         <font-awesome-icon class="mr-1" icon="fa-solid fa-user" />
-        <span>{{ latestEvent.returnValues.claimant }}</span>
+        <span class="overflow-x-auto max-w-48 md:max-w-fit">{{ latestEvent.returnValues.claimant }}</span>
       </div>
 
       <div v-if="!walletConnected && digest.string" class="flex flex-row items-center justify-center">
@@ -189,11 +214,11 @@
       </div>
 
       <div v-if="walletConnected && digest.string" class="flex flex-row items-center justify-center">
-        <button v-if="digestOnBlockchain" class="inline-flex items-center my-1 border rounded-md py-1 px-2 hover:bg-gray-200 text-lg" @click="checkDigest(null)">
+        <button v-if="digestOnBlockchain && !digestClaimChecked" class="inline-flex items-center my-1 border rounded-md py-1 px-2 hover:bg-gray-200 text-lg" @click="checkDigest(null)">
           <span>Verify your claim</span>
         </button>
 
-        <button v-else class="inline-flex items-center my-1 border rounded-md py-1 px-2 hover:bg-gray-200 text-lg" @click="storeDigest">
+        <button v-if="!digestOnBlockchain" class="inline-flex items-center my-1 border rounded-md py-1 px-2 hover:bg-gray-200 text-lg" @click="storeDigest">
           <span>Store digest</span>
         </button>
       </div>

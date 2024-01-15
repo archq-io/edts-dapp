@@ -1,11 +1,5 @@
 <script setup>
 import { RouterLink, RouterView } from 'vue-router'
-defineProps({
-  copyrightYear: {
-    type: Number,
-    required: true
-  }
-})
 </script>
 
 <template>

@@ -47,18 +47,20 @@ watch(() => route.query.url, url => {
 
 <template>
   <main>
-    <div class="flex flex-col justify-center items-center mt-10">
+    <div class="flex flex-col justify-center items-center mt-6">
       <DragAndDrop v-if="!state.file" @file-upload="processFileUpload" class="m-2" />
-      <button class="inline-flex items-center ml-1 border rounded-md py-1 px-2 hover:bg-gray-200 text-lg" v-else @click="state.file = null">
-        <font-awesome-icon class="mr-1" icon="fa-solid fa-chevron-left" />
-        Use another file
-      </button>
-      <EthereumPublishDigest :digest="state.digest" class="m-2" />
-      <button v-if="state.urlPresent" class="inline-flex items-center ml-1 border rounded-md py-1 px-2 hover:bg-gray-200 text-lg" @click="embedBadge = !embedBadge">
-        <span v-if="!embedBadge">Embed a badge</span>
-        <span v-else>Hide</span>
-      </button>
+      <EthereumPublishDigest v-if="state.file" :digest="state.digest" />
       <Badge v-if="embedBadge"/>
+      <div class="flex flex-row justify-center items-center mt-2">
+        <button class="inline-flex items-center mx-1 border rounded-md py-1 px-2 hover:bg-gray-200 text-lg" v-if="state.file" @click="state.file = null">
+          <font-awesome-icon class="mr-1" icon="fa-solid fa-chevron-left" />
+          <span>Use another file</span>
+        </button>
+        <button v-if="state.urlPresent" class="inline-flex items-center mx-1 border rounded-md py-1 px-2 hover:bg-gray-200 text-lg" @click="embedBadge = !embedBadge">
+          <span v-if="!embedBadge">Embed a badge</span>
+          <span v-else>Hide</span>
+        </button>
+      </div>
     </div>
   </main>
 </template>
