@@ -10,6 +10,7 @@
   const router = useRouter()
   const badgeIndex = ref(2)
   const badgeMarkdown = ref(null)
+  const baseUrl = window.location.origin
 
   const badgeSelection = computed(() => {
     switch (badgeIndex.value) {
@@ -56,7 +57,7 @@
           url: url,
         },
       })
-      badgeMarkdown.value = '[![Badge](' + blob + ')](' + resolved_url.href + ')'
+      badgeMarkdown.value = '[![Badge](' + blob + ')](' + baseUrl+resolved_url.href + ')'
     })
   }
 
@@ -77,6 +78,10 @@
     })
   }
 
+  function copy(text) {
+    window.navigator.clipboard.writeText(text)
+  }
+
   onMounted(() => {
     updateBadgeHook()
   })
@@ -91,12 +96,16 @@
         <font-awesome-icon class="mr-1" icon="fa-solid fa-chevron-left" />
         Previous
       </button>
+      <button class="inline-flex items-center m-1 border rounded-md py-1 px-2 hover:bg-gray-200" @click="copy(badgeMarkdown)">
+        <font-awesome-icon class="mr-1" icon="fa-solid fa-clipboard" />
+        Copy
+      </button>
       <button class="inline-flex items-center ml-1 border rounded-md py-1 px-2 hover:bg-gray-200" @click="nextBadge">
         Next
         <font-awesome-icon class="ml-1" icon="fa-solid fa-chevron-right" />
       </button>
     </div>
-    <p class="w-[35rem] h-32 bg-gray-200 rounded-md my-1 p-2 overflow-scroll break-words">{{ badgeMarkdown }}</p>
+    <!-- <p class="w-[35rem] h-32 bg-gray-200 rounded-md my-1 p-2 overflow-scroll break-words">{{ badgeMarkdown }}</p> -->
   </div>
 </template>
 

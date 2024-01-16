@@ -15,12 +15,12 @@ html,
 body,
 #app {
   height: 100%;
+  background-color: rgb(255 255 255);
 }
 
 #app {
   display: flex;
   flex-direction: column;
-  background-color: rgb(255 255 255); /* Can be rgb(250 250 250) */
 }
 
 @font-face {

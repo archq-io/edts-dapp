@@ -12,6 +12,7 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { faStamp } from '@fortawesome/free-solid-svg-icons'
 import { faCircleInfo } from '@fortawesome/free-solid-svg-icons'
 import { faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons'
+import { faClipboard } from '@fortawesome/free-solid-svg-icons'
 import { faCircleCheck, faCircleXmark, faCircleQuestion } from '@fortawesome/free-solid-svg-icons'
 import { faUser } from '@fortawesome/free-solid-svg-icons'
 import { faClock } from '@fortawesome/free-solid-svg-icons'
@@ -22,6 +23,7 @@ library.add(
   faStamp,
   faCircleInfo,
   faChevronLeft, faChevronRight,
+  faClipboard,
   faCircleCheck, faCircleXmark, faCircleQuestion,
   faUser,
   faClock,
