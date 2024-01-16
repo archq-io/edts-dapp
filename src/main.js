@@ -17,6 +17,7 @@ import { faUser } from '@fortawesome/free-solid-svg-icons'
 import { faClock } from '@fortawesome/free-solid-svg-icons'
 import { faEthereum } from '@fortawesome/free-brands-svg-icons'
 import { faSpinner } from '@fortawesome/free-solid-svg-icons'
+import { faGitAlt } from '@fortawesome/free-brands-svg-icons'
 library.add(
   faStamp,
   faCircleInfo,
@@ -25,7 +26,8 @@ library.add(
   faUser,
   faClock,
   faEthereum,
-  faSpinner
+  faSpinner,
+  faGitAlt,
 )
 
 const app = createApp(App)

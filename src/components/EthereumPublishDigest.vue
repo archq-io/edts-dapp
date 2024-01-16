@@ -18,8 +18,6 @@
   const digestClaimedByAccount = ref(false)
   const digestClaimChecked = ref(false)
 
-  const operationInProgress = ref(false)
-
   const revealDigest = ref(false)
   const digestOnBlockchain = ref(false)
   const searchForDigestCompleted = ref(false)
@@ -129,8 +127,10 @@
       let blockNumber = 0;
       let latestIndex = 0;
       for (let i = 0; i < eventsLength; i++) {
-        if (events[i].blockNumber > blockNumber && events[i].returnValues.claim) {
-          // TODO: This is a rough estimate. Also check the transaction index!
+        if (events[i].blockNumber < blockNumber && events[i].returnValues.claim) {
+          // TODO: Make sure this is the correct approach.
+          // Perhaps we should list all events for this digest on the
+          // site.
           blockNumber = events[i].blockNumber
           latestIndex = i;
         }
@@ -144,7 +144,7 @@
         console.log(latestEvent.value.returnValues)
         checkDigest(latestEvent.value.returnValues.claimant)
       } else {
-        digestOnBlockchain.value = true
+        digestOnBlockchain.value = false
         searchForDigestCompleted.value = true
       }
     }).catch(e => {
