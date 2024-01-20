@@ -1,5 +1,5 @@
 <script setup>
-  import { ref, watch, onMounted } from 'vue'
+  import { ref, watch, onMounted, computed } from 'vue'
   import Web3 from 'web3'
   import abi from '../assets/abi/abi.json'
 
@@ -21,6 +21,10 @@
   const revealDigest = ref(false)
   const digestOnBlockchain = ref(false)
   const searchForDigestCompleted = ref(false)
+
+  const eip1193Available = computed(() => {
+    return window.ethereum ? true : false
+  })
 
   function checkWalletConnection() {
     return new Promise((resolve, reject) => {
@@ -206,12 +210,18 @@
         <span class="overflow-x-auto max-w-48 md:max-w-fit">{{ latestEvent.returnValues.claimant }}</span>
       </div>
 
+      <!-- Ethereum EIP-1193 injected provider connection -->
       <div v-if="!walletConnected && digest.string" class="flex flex-row items-center justify-center">
-        <button class="inline-flex items-center my-1 border rounded-md py-1 px-2 hover:bg-gray-200 text-lg" @click="connectWallet">
+        <button v-if="eip1193Available" class="inline-flex items-center my-1 border rounded-md py-1 px-2 hover:bg-gray-200 text-lg" @click="connectWallet">
           <font-awesome-icon class="mr-1" icon="fa-brands fa-ethereum" />
           <span>Connect Ethereum wallet</span>
         </button>
+        <div v-else class="inline-flex items-center my-1 border rounded-md py-1 px-2 bg-red-100 border-red-500 text-lg">
+          <font-awesome-icon class="mr-1" icon="fa-brands fa-ethereum" />
+          <span>EIP-1193 (injected provider) unavailable</span>
+        </div>
       </div>
+
 
       <div v-if="walletConnected && digest.string" class="flex flex-row items-center justify-center">
         <button v-if="digestOnBlockchain && !digestClaimChecked" class="inline-flex items-center my-1 border rounded-md py-1 px-2 hover:bg-gray-200 text-lg" @click="checkDigest(null)">
