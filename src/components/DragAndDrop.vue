@@ -38,10 +38,10 @@
 </script>
 
 <template>
-  <div>
+  <div class="flex flex-col justify-center items-center">
     <div
       id="dropbox"
-      class="w-96 h-32 mb-6 flex justify-center items-center bg-slate-100 outline outline-2 outline-offset-2 outline-dashed rounded-md"
+      class="w-64 md:w-96 h-32 mb-6 flex justify-center items-center bg-slate-100 outline outline-2 outline-offset-2 outline-dashed rounded-md"
       :class="{ '!bg-slate-200': dropboxHighlighted }"
       @dragover="fileDragOver"
       @dragenter="fileDragEnter"
@@ -50,11 +50,13 @@
     >
       <p>Drop the file here</p>
     </div>
-    <input
-      class="w-96 text-sm text-slate-500 file:py-2 file:px-4 file:border-0 file:rounded-full file:text-sm file:font-semibold file:bg-slate-100 file:text-slate-700 hover:file:bg-slate-200"
-      type="file"
-      @change="fileInput"
-    />
+    <div class="flex flex-row justify-start items-center w-full">
+      <input
+        class="text-sm text-slate-500 file:py-2 file:px-4 file:border-0 file:rounded-full file:text-sm file:font-semibold file:bg-slate-100 file:text-slate-700 hover:file:bg-slate-200"
+        type="file"
+        @change="fileInput"
+      />
+    </div>
   </div>
 </template>
 
