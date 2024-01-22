@@ -9,17 +9,26 @@
   const route = useRoute()
   const router = useRouter()
   const badgeIndex = ref(2)
-  const badgeMarkdown = ref(null)
+  const badgeHTML = ref(null)
   const baseUrl = window.location.origin
 
   const badgeSelection = computed(() => {
     switch (badgeIndex.value) {
       case 0:
-        return badgeFlat
+        return {
+          'asset': badgeFlat,
+          'static': import.meta.env.VITE_BADGE_FLAT
+        }
       case 1:
-        return badgeFlatSquare
+        return {
+          'asset': badgeFlatSquare,
+          'static': import.meta.env.VITE_BADGE_FLAT_SQUARE
+        }
       case 2:
-        return badgeForTheBadge
+        return {
+          'asset': badgeForTheBadge,
+          'static': import.meta.env.VITE_BADGE_FOR_THE_BADGE
+        }
       default:
         return
     }
@@ -46,36 +55,20 @@
   }
 
   function updateBadgeHook() {
-    createMarkdown(badgeSelection.value, route.query.url)
+    createHTML(
+      badgeSelection.value.static ? badgeSelection.value.static : baseUrl+badgeSelection.value.asset,
+      route.query.url
+    )
   }
 
-  function createMarkdown(badge_url, url = route.query.url) {
-    getBadgeAsBlob(badge_url).then(blob => {
-      let resolved_url = router.resolve({
-        name: 'dAppView',
-        query: {
-          url: url,
-        },
-      })
-      badgeMarkdown.value = '[![Badge](' + blob + ')](' + baseUrl+resolved_url.href + ')'
+  function createHTML(badge_url, url = route.query.url) {
+    let resolved_url = router.resolve({
+      name: 'dAppView',
+      query: {
+        url: url,
+      },
     })
-  }
-
-  function getBadgeAsBlob(badge_url) {
-    return new Promise((resolve, reject) => {
-      fetch(badge_url).then(res => {
-        let contentType = res.headers.get('Content-Type')
-        res.arrayBuffer().then(buf => {
-          bytesToBase64DataUrl(buf, contentType).then(base64 => {
-            resolve(base64)
-          })
-        }).catch(e => {
-          reject(e)
-        })
-      }).catch(e => {
-        reject(e)
-      })
-    })
+    badgeHTML.value = '<a href="' + baseUrl+resolved_url.href + '"><img src="' + badge_url + '"></a>'
   }
 
   function copy(text) {
@@ -90,13 +83,13 @@
 <template>
   <div class="flex flex-col items-center justify-center">
     <p>Select a badge</p>
-    <img class="my-1" :src="badgeSelection"/>
+    <img class="my-1" :src="badgeSelection.asset"/>
     <div class="flex flex-row items-center justify-center my-1">
       <button class="inline-flex items-center mr-1 border rounded-md py-1 px-2 hover:bg-gray-200" @click="prevBadge">
         <font-awesome-icon class="mr-1" icon="fa-solid fa-chevron-left" />
         Previous
       </button>
-      <button class="inline-flex items-center m-1 border rounded-md py-1 px-2 hover:bg-gray-200" @click="copy(badgeMarkdown)">
+      <button class="inline-flex items-center m-1 border rounded-md py-1 px-2 hover:bg-gray-200" @click="copy(badgeHTML)">
         <font-awesome-icon class="mr-1" icon="fa-solid fa-clipboard" />
         Copy
       </button>
