@@ -1,7 +1,7 @@
 <template>
   <div class="flex flex-col items-start justify-start mx-8 md:mx-64 mt-4">
     <p class="text-xl md:text-2xl">About the project</p>
-    <p>Decentralized timestamping is a process of reliably storing the creation or modification time of a file on multiple nodes without a centralized authority. In contrast to TSA (Time Stamping Authorities) there is no need have faith in a proper infrastructure deployment of a centralized authority, but rather in the protocol implementation itself (trustless decentralized application).</p>
+    <p>Decentralized timestamping is a process of reliably storing the creation or modification time of a file on multiple nodes without a centralized authority. In contrast to TSA (Time Stamping Authorities) there is no need to have faith in a proper infrastructure deployment of a centralized authority, but rather in the protocol implementation itself (trustless decentralized application).</p>
     <p>This dApp is open source and the smart contract runs on the <font-awesome-icon icon="fa-brands fa-ethereum" /> Ethereum blockchain.</p>
     <p>Your file goes through the timestamping process, once you upload it:</p>
     <ol class="list-decimal ml-8">
