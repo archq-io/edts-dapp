@@ -6,7 +6,7 @@ const donationLink = ref(import.meta.env.VITE_DONATION_LINK)
 </script>
 
 <template>
-  <footer class="mb-2">
+  <footer class="mb-2 mt-4">
     <div class="flex h-8 items-center justify-stretch mb-1 md:mb-0">
       <div class="w-full">
         <!-- Content Placeholder -->
