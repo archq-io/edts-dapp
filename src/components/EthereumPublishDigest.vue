@@ -1,6 +1,7 @@
 <script setup>
   import { ref, watch, onMounted, computed } from 'vue'
   import Web3 from 'web3'
+  import { ERR_RESPONSE } from 'web3-errors'
   import abi from '../assets/abi/abi.json'
   import Alert from '@/components/Alert.vue'
 
@@ -88,8 +89,8 @@
       claimed.value = receipt.claimed
       transferred.value = receipt.transferred
     }).catch(e => {
-      if (e.hasOwnProperty('name')) {
-        if (e.name == 'ResponseError') {
+      if (e.hasOwnProperty('code')) {
+        if (e.code == ERR_RESPONSE) {
           if (ethereumAccount) {
             digestClaimedByAccount.value = false
             digestClaimChecked.value = true
