@@ -19,6 +19,7 @@
 
   const digestClaimedByAccount = ref(false)
   const digestClaimChecked = ref(false)
+  const digestClaimRequested = ref(false)
 
   const revealDigest = ref(false)
   const digestOnBlockchain = ref(false)
@@ -233,9 +234,13 @@
       </div>
 
       <div v-if="walletConnected && digest.string" class="flex flex-row items-center justify-center">
-        <button v-if="digestOnBlockchain && !digestClaimChecked" class="inline-flex items-center my-1 border rounded-md py-1 px-2 hover:bg-gray-200 text-lg" @click="checkDigest(null)">
+        <button v-if="digestOnBlockchain && !digestClaimChecked && !digestClaimRequested" class="inline-flex items-center my-1 border rounded-md py-1 px-2 hover:bg-gray-200 text-lg" @click="checkDigest(null); digestClaimRequested = true">
           <span>Verify your claim</span>
         </button>
+        <div v-if="digestOnBlockchain && !digestClaimChecked && digestClaimRequested" class="inline-flex items-center my-1 border rounded-md py-1 px-2 text-lg cursor-wait">
+          <font-awesome-icon class="mr-1 animate-spin" icon="fa-solid fa-spinner" />
+          <span>Verifying...</span>
+        </div>
         <Alert
           v-if="digestOnBlockchain && digestClaimChecked && !digestClaimedByAccount"
           message="Your Ethereum account does not have a claim on this digest."
