@@ -10,6 +10,11 @@ A dApp for decentralized timestamping on the Ethereum network.
 
 See [Vite Configuration Reference](https://vitejs.dev/config/).
 
+## Configure for deployment
+
+Copy the example configuration from the `.env.example` file into the `.env` file and modify it according to your needs.<br>
+This step is required for development and for a production deployment.
+
 ## Project Setup
 
 ```sh
