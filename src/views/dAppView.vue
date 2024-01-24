@@ -56,7 +56,7 @@ watch(() => route.query.url, url => {
           <font-awesome-icon class="mr-1" icon="fa-solid fa-chevron-left" />
           <span>Use another file</span>
         </button>
-        <button v-if="state.urlPresent" class="inline-flex items-center mx-1 border rounded-md py-1 px-2 hover:bg-gray-200 text-lg" @click="embedBadge = !embedBadge">
+        <button v-if="state.urlPresent && state.file" class="inline-flex items-center mx-1 border rounded-md py-1 px-2 hover:bg-gray-200 text-lg" @click="embedBadge = !embedBadge">
           <span v-if="!embedBadge">Embed a badge</span>
           <span v-else>Hide</span>
         </button>

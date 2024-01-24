@@ -2,12 +2,14 @@
   import { ref, watch, onMounted, computed } from 'vue'
   import Web3 from 'web3'
   import abi from '../assets/abi/abi.json'
+  import Alert from '@/components/Alert.vue'
 
   const props = defineProps(['digest'])
   const web3 = ref(new Web3(import.meta.env.VITE_WEB3_PROVIDER))
   const contractAddress = ref(import.meta.env.VITE_SMART_CONTRACT_ADDRESS)
   const walletConnected = ref(false)
   const providerConnected = ref(false)
+  const multipleWalletsConnected = ref(false)
 
   const timestamp = ref(null)
   const claimed = ref(false)
@@ -45,10 +47,12 @@
   function connectWallet() {
     if (window.ethereum) {
       window.ethereum.request({method: 'eth_requestAccounts'}).then(accounts => {
-        if (accounts.length != 0) {
+        if (accounts.length == 1) {
           web3.value.setProvider(window.ethereum)
           walletConnected.value = true
           providerConnected.value = true
+        } else if (accounts.length > 1) {
+          multipleWalletsConnected.value = true
         }
       })
     }
@@ -211,23 +215,31 @@
       </div>
 
       <!-- Ethereum EIP-1193 injected provider connection -->
-      <div v-if="!walletConnected && digest.string" class="flex flex-row items-center justify-center">
-        <button v-if="eip1193Available" class="inline-flex items-center my-1 border rounded-md py-1 px-2 hover:bg-gray-200 text-lg" @click="connectWallet">
+      <div v-if="!walletConnected && digest.string" class="flex flex-col items-center justify-center">
+        <button v-if="eip1193Available && !multipleWalletsConnected" class="inline-flex items-center my-1 border rounded-md py-1 px-2 hover:bg-gray-200 text-lg" @click="connectWallet">
           <font-awesome-icon class="mr-1" icon="fa-brands fa-ethereum" />
           <span>Connect Ethereum wallet</span>
         </button>
-        <div v-else class="inline-flex items-center my-1 border rounded-md py-1 px-2 bg-red-100 border-red-500 text-lg">
-          <font-awesome-icon class="mr-1" icon="fa-brands fa-ethereum" />
-          <span>EIP-1193 (injected provider) unavailable</span>
-        </div>
+        <Alert
+          v-if="!eip1193Available"
+          icon="fa-brands fa-ethereum"
+          message="EIP-1193 (injected provider) unavailable"
+        />
+        <Alert
+          v-if="eip1193Available && multipleWalletsConnected"
+          icon="fa-brands fa-ethereum"
+          message="Multiple Ethereum accounts connected via EIP-1193. Select only one account and try again."
+        />
       </div>
-
 
       <div v-if="walletConnected && digest.string" class="flex flex-row items-center justify-center">
         <button v-if="digestOnBlockchain && !digestClaimChecked" class="inline-flex items-center my-1 border rounded-md py-1 px-2 hover:bg-gray-200 text-lg" @click="checkDigest(null)">
           <span>Verify your claim</span>
         </button>
-
+        <Alert
+          v-if="digestOnBlockchain && digestClaimChecked && !digestClaimedByAccount"
+          message="Your Ethereum account does not have a claim on this digest."
+        />
         <button v-if="!digestOnBlockchain" class="inline-flex items-center my-1 border rounded-md py-1 px-2 hover:bg-gray-200 text-lg" @click="storeDigest">
           <span>Store digest</span>
         </button>
