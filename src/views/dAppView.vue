@@ -5,6 +5,7 @@ import { sha256_digest } from '@/utils/file.js'
 import DragAndDrop from '@/components/DragAndDrop.vue'
 import EthereumPublishDigest from '@/components/EthereumPublishDigest.vue'
 import Badge from '@/components/Badge.vue'
+import Alert from '@/components/Alert.vue'
 
 const route = useRoute();
 const router = useRouter();
@@ -12,6 +13,8 @@ const router = useRouter();
 const enableAbout = ref(import.meta.env.VITE_ENABLE_ABOUT == 'true')
 
 const urlInput = ref('')
+const urlLoadError = ref(false)
+
 const embedBadge = ref(false)
 let state = reactive({
   file: null,
@@ -51,7 +54,10 @@ function getFile(url) {
         let file = new File([value], '', { type: contentType })
         sha256_digest(file).then(digest => state.digest = digest)
         state.file = file
+        urlLoadError.value = false
       })
+    }).catch(e => {
+      urlLoadError.value = true
     })
 }
 
@@ -80,6 +86,7 @@ watch(() => route.query.url, url => {
             <span>Load file</span>
           </button>
         </div>
+        <Alert v-if="urlLoadError" message="File load failed - check CORS policy!" class="mt-3"/>
         <span>or</span>
         <DragAndDrop @file-upload="processFileUpload" class="mt-2" />
       </div>
